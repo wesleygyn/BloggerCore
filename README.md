@@ -1,0 +1,1 @@
+# BloggerCore
