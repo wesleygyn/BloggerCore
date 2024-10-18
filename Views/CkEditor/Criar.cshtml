@@ -1,0 +1,55 @@
+﻿@model BloggerCore.Models.ViewModels.CkEditorModel
+
+<form asp-action="Criar" method="post">
+    <div class="form-group">
+        <label asp-for="Titulo"></label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="ConteudoHTML"></label>
+        <textarea asp-for="ConteudoHTML" id="editor" name="ConteudoHTML"></textarea>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+
+@section scripts{
+    <script src="https://cdn.ckeditor.com/ckeditor5/22.0.0/classic/ckeditor.js"></script>
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'),
+                {
+                    language: 'pt-br',
+                    ckfinder: { uploadUrl: '/CkEditor/UploadImagem' }
+                })
+            .catch(error => { console.error(error); });
+    </script>
+}
+
+
+
+
+@* @section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                extraPlugins: [Image],
+                image: {
+                    toolbar: ['imageTextAlternative', 'imageStyle:full', 'imageStyle:side'],
+                    upload: {
+                        url: '/CkEditor/UploadImagem', // Substitua pelo URL correto da ação de upload de imagem
+                        method: 'POST', // Use o método HTTP POST
+                        withCredentials: true, // Permita cookies e credenciais de autenticação
+                    },
+                },
+            })
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+} *@

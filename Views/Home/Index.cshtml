@@ -1,0 +1,76 @@
+﻿@model IEnumerable<BloggerCore.Models.Postagem>
+@using System.Web
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewData["Title"] = "Home";
+}
+
+<div class="row">
+    <div class="col-md-10 col-lg-8">
+
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <div class="post-preview">
+                    <a href="#">
+                        <h2 class="post-title">@item.Titulo</h2>
+                    </a>
+
+                    @Html.Raw(HttpUtility.HtmlDecode(item.Descricao))
+                    @Html.ActionLink("Ver mais...", "Details", "Postagens", new { id = item.Id }, null)
+
+                    <div class="row">
+
+                        <div class="col-md-9">
+
+                            <p class="post-meta">@item.Operacao por @item.Autor em @item.DataAlteracao</p>
+
+                        </div>
+                        <div class="col-md-3">
+
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a class="btn bg-transparent" asp-controller="Postagens" asp-action="Edit" asp-route-id="@item?.Id" title="Editar a postagem "><strong style="color: orange"><i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i></strong></a>
+                                <a class="btn bg-transparent" asp-controller="Postagens" asp-action="Delete" asp-route-id="@item?.Id"><strong style="color: red"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></strong></a>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <hr>
+            }
+        }
+        else
+        {
+            <div class="col-md mt-12 mb-12">
+                <div class="k-card">
+                    <div class="k-card-header">
+                        Nenhuma postagem encontrada
+                    </div>
+                    <div class="k-card-body">
+                        Nenhuma postagem encontrada. Aguarde o administrador realizar a postagem.
+                    </div>
+                </div>
+            </div>
+        }
+
+
+        <div class="post-preview">
+            <a href="#">
+                <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
+                <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
+            </a>
+            <p class="post-meta">Posted by&nbsp;<a href="#">Start Bootstrap on September 24, 2018</a></p>
+        </div>
+        <hr>
+
+        <div class="clearfix"><button class="btn btn-primary float-end" type="button">Older Posts&nbsp;⇒</button></div>
+    </div>
+</div>

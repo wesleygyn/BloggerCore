@@ -1,0 +1,30 @@
+﻿@model BloggerCore.Models.Postagem
+@using System.Web
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+    ViewBag.Title = "Delete";
+}
+
+<div class="container">
+
+    <div class="col-md mt-12 mb-12">
+        <div class="k-card">
+            <div class="k-card-header">
+                @Html.DisplayFor(model => model.Titulo)
+            </div>
+            <div class="k-card-body">
+                @Html.Raw(HttpUtility.HtmlDecode(Model.Descricao))
+            </div>
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Delete" class="btn btn-danger" /> |
+                <a class="btn btn-info" asp-area="" asp-controller="Home" asp-action="Index">Voltar</a>
+            </form>
+        </div>
+    </div>
+
+</div>

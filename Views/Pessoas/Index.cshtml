@@ -1,0 +1,88 @@
+﻿@model IEnumerable<BloggerCore.Models.Pessoa>
+@using Kendo.Mvc.UI
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="toolbar">
+    <a href="@Url.Action("Create", "Pessoas")" class="btn btn-primary">Create New</a>
+</div>
+
+<br />
+
+@(Html.Kendo().Grid<BloggerCore.Models.Pessoa>()
+    .Name("myGrid")
+    .Columns(columns =>
+    {
+        columns.Select().Width(40);
+        columns.Bound(p => p.Id);
+        columns.Bound(p => p.Nome).Width(250);
+        columns.Bound(p => p.Nascimento)
+       .ClientTemplate("#= kendo.toString(Nascimento, 'dd/MM/yyyy') #")
+       .EditorTemplateName("DatePicker") // Ou algo similar
+       .Width(250);
+        columns.Bound(p => p.Email).Width(100);
+        columns.Bound(p => p.Telefone).Width(100);
+        columns.Bound(p => p.Cidade);
+
+        // Coluna de comandos com Edit, Delete e Details
+        columns.Command(command =>
+        {
+            command.Edit().Text("Edit").UpdateText("Update").CancelText("Cancel"); // Editar
+            command.Destroy().Text("Delete"); // Deletar
+            command.Custom("Details").Click("showDetails").Text("Details"); // Detalhes (Customizado)
+        }).Width(250);
+    })
+    .ColumnMenu()
+    .Pageable(pager => pager.AlwaysVisible(true)
+                            .PageSizes(new int[] { 10, 20, 50 })
+                            .PreviousNext(true)
+                            .ButtonCount(5)
+                            .Refresh(true))
+    .Selectable(selectable => selectable.Type(GridSelectionType.Row).Mode(GridSelectionMode.Multiple))
+    .PersistSelection()
+    .Scrollable()
+    .Sortable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Model(model =>
+        {
+            model.Id(p => p.Id); // Definindo a propriedade 'Id' como identificador
+        })
+        .Read(read => read.Action("ReadData", "Pessoas"))
+        .Update(update => update.Action("Update", "Pessoas")) // Método de edição na controller
+        .Destroy(delete => delete.Action("Delete", "Pessoas")) // Método de exclusão na controller
+    )
+    .Editable(editable => editable.Mode(GridEditMode.PopUp))  // Definindo modo de edição em Popup
+)
+
+<div id="detailsWindow" style="display:none;">
+    <!-- Este conteúdo será preenchido dinamicamente com os detalhes -->
+</div>
+
+<script type="text/javascript">
+    function showDetails(e) {
+        e.preventDefault();
+
+        var grid = $("#myGrid").data("kendoGrid"); // Referência ao grid
+        var dataItem = grid.dataItem($(e.currentTarget).closest("tr")); // Pegando a linha selecionada
+        var id = dataItem.Id; // Obtendo o Id da pessoa
+
+        // Abrindo o modal de detalhes
+        var detailsWindow = $("#detailsWindow").kendoWindow({
+            title: "Detalhes da Pessoa",
+            modal: true,
+            visible: false,  // Janela inicialmente invisível
+            width: "600px",
+            actions: ["Close"]
+        }).data("kendoWindow");
+
+        // Carregar o conteúdo dos detalhes via AJAX
+        detailsWindow.content("<div class='loading'>Carregando...</div>"); // Mostrar carregamento
+        detailsWindow.refresh({
+            url: "/Pessoas/Details/" + id, // URL para a ação de detalhes
+            type: "GET"
+        }).center().open(); // Centraliza e abre o modal
+    }
+</script>
